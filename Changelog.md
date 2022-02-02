@@ -34,4 +34,4 @@
 - Remove `app.configuration`
 - `var` -> `const` or `let` in both Node and browser code
 - Object initialization
-- Rewrite `date`-functions (used `String.padStart`)
+- Rewrite date-functions (used `String.padStart`)
