@@ -10,6 +10,7 @@ const express = require('express');
 const app = module.exports = express();
 const port = process.env.PORT ?? 3000;
 const host = process.env.HOST ?? 'localhost';
+const baseUrl = `http://${host}:${port}`
 
 const errorhandler = require('errorhandler');
 const bodyParser = require('body-parser');
@@ -42,7 +43,7 @@ app.get('/collection/tasks/', function (req, res) {
   db.get(view, function (err, doc) {
     res.header('content-type', contentType);
     res.render('tasks', {
-      site: 'http://localhost:3000/collection/tasks/',
+      site: `${baseUrl}/collection/tasks/`,
       items: doc
     });
   });
@@ -53,7 +54,7 @@ app.get('/collection/tasks/;queries', function (req, res) {
   res.header('content-type', contentType);
   res.render('queries', {
     layout: 'item-layout',
-    site: 'http://localhost:3000/collection/tasks/'
+    site: `${baseUrl}/collection/tasks/`
   });
 });
 
@@ -61,7 +62,7 @@ app.get('/collection/tasks/;template', function (req, res) {
   res.header('content-type', contentType);
   res.render('template', {
     layout: 'item-layout',
-    site: 'http://localhost:3000/collection/tasks/'
+    site: `${baseUrl}/collection/tasks/`
   });
 });
 
@@ -72,7 +73,7 @@ app.get('/collection/tasks/;all', function (req, res) {
   db.get(view, function (err, doc) {
     res.header('content-type', contentType);
     res.render('tasks', {
-      site: 'http://localhost:3000/collection/tasks/',
+      site: `${baseUrl}/collection/tasks/`,
       items: doc
     });
   });
@@ -85,7 +86,7 @@ app.get('/collection/tasks/;open', function (req, res) {
   db.get(view, function (err, doc) {
     res.header('content-type', contentType);
     res.render('tasks', {
-      site: 'http://localhost:3000/collection/tasks/',
+      site: `${baseUrl}/collection/tasks/`,
       items: doc
     });
   });
@@ -98,7 +99,7 @@ app.get('/collection/tasks/;closed', function (req, res) {
   db.get(view, function (err, doc) {
     res.header('content-type', contentType);
     res.render('tasks', {
-      site: 'http://localhost:3000/collection/tasks/',
+      site: `${baseUrl}/collection/tasks/`,
       items: doc
     });
   });
@@ -119,7 +120,7 @@ app.get('/collection/tasks/;date-range', function (req, res) {
   db.get(view, options, function (err, doc) {
     res.header('content-type', contentType);
     res.render('tasks', {
-      site: 'http://localhost:3000/collection/tasks/',
+      site: `${baseUrl}/collection/tasks/`,
       items: doc,
       query: view
     });
@@ -136,7 +137,7 @@ app.get('/collection/tasks/:i', function (req, res) {
     res.header('etag', doc._rev);
     res.render('task', {
       layout: 'item-layout',
-      site: 'http://localhost:3000/collection/tasks/',
+      site: `${baseUrl}/collection/tasks/`,
       item: doc
     });
   });
@@ -252,6 +253,6 @@ function today() {
 // Only listen on $ node app.js
 if (require.main === module) {
   app.listen(port, host, () => {
-    console.log(`Express server listening on port http://${host}:${port}/`);
+    console.log(`Express server listening on address ${baseUrl}`);
   });
 }

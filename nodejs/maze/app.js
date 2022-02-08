@@ -8,6 +8,7 @@ const express = require('express');
 const app = module.exports = express();
 const port = process.env.PORT ?? 3000;
 const host = process.env.HOST ?? 'localhost';
+const baseUrl = `http://${host}:${port}`
 const errorhandler = require('errorhandler');
 const expressLayout = require('express-ejs-layouts')
 
@@ -33,7 +34,7 @@ app.get('/maze/', function(req, res){
   res.header('content-type',contentType);
   res.render('collection', {
     title : 'Maze+XML Hypermedia Example',
-    site  : 'http://localhost:3000/maze'
+    site  : `${baseUrl}/maze`
   });
 });
 
@@ -44,7 +45,7 @@ app.get('/maze/:m', function (req, res) {
   db.get(mz, function (err, doc) {
     res.header('content-type',contentType);
     res.render('item', {
-      site  : 'http://localhost:3000/maze',
+      site  : `${baseUrl}/maze`,
       maze  : mz,
       debug : doc
     });
@@ -58,7 +59,7 @@ app.get('/maze/:m/999', function (req, res) {
 
   res.header('content-type', contentType);
   res.render('exit', {
-    site  : 'http://localhost:3000/maze',
+    site  : `${baseUrl}/maze`,
     maze  : mz,
     cell  : cz,
     total : 0,
@@ -83,7 +84,7 @@ app.get('/maze/:m/:c', function (req, res) {
     
     res.header('content-type', contentType);
     res.render('cell', {
-      site  : 'http://localhost:3000/maze',
+      site  : `${baseUrl}/maze`,
       maze  : mz,
       cell  : cz,
       total : tot,
@@ -98,6 +99,6 @@ app.get('/maze/:m/:c', function (req, res) {
 // Only listen on $ node app.js
 if (require.main === module) {
   app.listen(port, host, () => {
-    console.log(`Express server listening on port http://${host}:${port}/`);
+    console.log(`Express server listening on address ${baseUrl}`);
   });
 }
