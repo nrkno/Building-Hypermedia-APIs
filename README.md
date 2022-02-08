@@ -40,3 +40,9 @@ Install Node dependencies by running the following command:
 ```bash
 npm install
 ```
+
+To start an example application, navigate to the project folder in `nodejs/`, and run the command:
+
+```bash
+node app.js
+```

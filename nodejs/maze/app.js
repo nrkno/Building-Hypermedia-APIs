@@ -4,33 +4,29 @@
 */
 
 // for express
-var express = require('express');
-var app = module.exports = express.createServer();
+const express = require('express');
+const app = module.exports = express();
+const port = process.env.PORT ?? 3000;
+const host = process.env.HOST ?? 'localhost';
+const errorhandler = require('errorhandler');
+const expressLayout = require('express-ejs-layouts')
 
 // for couch
 var cradle = require('cradle');
+const errorHandler = require('errorhandler');
 var db = new(cradle.Connection)().database('maze-data');
 
 // global data
 var contentType = 'application/xml';
 
 // Configuration
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-});
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(expressLayout);
+app.use(express.static(__dirname + '/public'));
 
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler()); 
-});
+const errorOptions = process.NODE_ENV === 'production' ? { dumpExceptions: true, showStack: true } : undefined;
+app.use(errorHandler(errorOptions));
 
 // handle collection 
 app.get('/maze/', function(req, res){
@@ -43,9 +39,7 @@ app.get('/maze/', function(req, res){
 
 // handle item
 app.get('/maze/:m', function (req, res) {
-  var mz;
-  
-  mz = (req.params.m || 'none');
+  const mz = (req.params.m || 'none');
 
   db.get(mz, function (err, doc) {
     res.header('content-type',contentType);
@@ -59,10 +53,8 @@ app.get('/maze/:m', function (req, res) {
 
 // handle exit 
 app.get('/maze/:m/999', function (req, res) {
-  var mz, cz;
-  
-  mz = (req.params.m || 'none');
-  cz = (req.params.c || '0');
+  const mz = (req.params.m || 'none');
+  const cz = (req.params.c || '0');
 
   res.header('content-type', contentType);
   res.render('exit', {
@@ -78,18 +70,16 @@ app.get('/maze/:m/999', function (req, res) {
 
 // handle cell
 app.get('/maze/:m/:c', function (req, res) {
-  var mz, cz, x, ex, i, tot, sq;
-  
-  mz = (req.params.m || 'none');
-  cz = (req.params.c || '0');
+  const mz = (req.params.m || 'none');
+  const cz = (req.params.c || '0');
 
   db.get(mz, function (err, doc) {
-    i = parseInt(cz.split(':')[0], 10);
-    x = 'cell' + i;
+    const i = parseInt(cz.split(':')[0], 10);
+    const x = 'cell' + i;
     
-    tot = Object.keys(doc.cells).length;
-    ex = (i === tot-1 ? '1' : '0');
-    sq = Math.sqrt(tot);
+    const tot = Object.keys(doc.cells).length;
+    const ex = (i === tot-1 ? '1' : '0');
+    const sq = Math.sqrt(tot);
     
     res.header('content-type', contentType);
     res.render('cell', {
@@ -106,14 +96,8 @@ app.get('/maze/:m/:c', function (req, res) {
 });
 
 // Only listen on $ node app.js
-if (!module.parent) {
-  app.listen(3000);
-
-  var address = app.address();
-  if (address === null) {
-    console.log("Port %d already used.", 3000);
-    process.exit(1);
-  }
-
-  console.log("Express server listening on port %d", address.port);
+if (require.main === module) {
+  app.listen(port, host, () => {
+    console.log(`Express server listening on port http://${host}:${port}/`);
+  });
 }
