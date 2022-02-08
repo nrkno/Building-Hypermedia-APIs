@@ -19,7 +19,7 @@ To run the example applications in the book, you need:
 - [Node](https://nodejs.org/en/download/)
 - [Docker](https://docs.docker.com/get-docker/)
 - CouchDB (see below)
-- Unix shell
+- curl
 
 ### CouchDB
 
@@ -33,16 +33,11 @@ Verify CouchDB installation by going to <http://127.0.0.1:5984/_utils/#/verifyin
 
 To populate the DB for each example run the shell scripts in the corresponding folders in `couchdb/`.
 
-### Node dependencies
+## Running the example
 
-Install Node dependencies by running the following command:
+Navigate to the appropriate project subfolder in `nodejs/`. Install Node dependencies and start the example application by running the following commands:
 
 ```bash
 npm install
-```
-
-To start an example application, navigate to the project folder in `nodejs/`, and run the command:
-
-```bash
 node app.js
 ```
