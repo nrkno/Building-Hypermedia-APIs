@@ -13,7 +13,7 @@
 - Remove leading `/` from CouchDB view names
 - Update dependencies
   - `Express 2.x.x -> 4.x.x`
-    - Add `body-parser`, `errorhandler` and `express-ejs-layout` as middlewares
+    - Add `body-parser`, `errorhandler` and `express-ejs-layouts` as middlewares
     - Remove `methodOverride`, `router`
   - `ejs 2.x.x -> 3.x.x`
 - Rewrite `app.listen`
@@ -23,3 +23,15 @@
 - Rewrite `today`-function (used `String.padStart`)
 
 ## Chapter 4
+
+- Remove leading `/` from CouchDB view names
+- Update dependencies
+  - `Express 2.x.x -> 4.x.x`
+    - Add `body-parser`, `errorhandler` and `express-ejs-layouts` as middlewares
+    - Remove `methodOverride`, `router`
+  - `ejs 2.x.x -> 3.x.x`
+- Rewrite `app.listen`
+- Remove `app.configuration`
+- `var` -> `const` or `let` in both Node and browser code
+- Object initialization
+- Rewrite date-functions (used `String.padStart`)

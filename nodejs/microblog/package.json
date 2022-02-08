@@ -7,11 +7,13 @@
     "test": "test"
   },
   "dependencies": {
-    "cradle": "^0.6.9",
-    "express": "^2.5.11",
-    "ejs": "^2.3.1"
+    "body-parser": "^1.19.1",
+    "cradle": "^0.7.1",
+    "ejs": "^3.1.6",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.2",
+    "express-ejs-layouts": "^2.5.1"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
