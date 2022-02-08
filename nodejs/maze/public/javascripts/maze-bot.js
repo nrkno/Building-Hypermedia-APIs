@@ -1,115 +1,115 @@
 /* 2011-04-15 (mca) : maze-bot.js */
 /* Designing Hypermedia APIs by Mike Amundsen (2011) */
 
-var thisPage = function() {
-  
-  var g = {};
-  g.idx = 1;
-  g.links = [];
-  g.facing = '';
-  g.done = false;
-  g.start = false;
-  g.mediaType = "application/vnd.amundsen.maze+xml";
-  g.startLink = "http://localhost:3000/maze/five-by-five/";
-  
-  // simple right-hand wall-following rules:
-  // if door-right, face right
-  // else-if door-forward, face forward
-  // else-if door-left, face left
-  // else face back
-  g.rules = {
-    'east'  : ['south', 'east', 'north', 'west'],
-    'south' : ['west', 'south', 'east', 'north'],
-    'west'  : ['north', 'west', 'south', 'east'],
-    'north' : ['east', 'north', 'west', 'south']
+const thisPage = function () {
+
+  const g = {
+    idx: 1,
+    links: [],
+    facing: '',
+    done: false,
+    start: false,
+    mediaType: "application/vnd.amundsen.maze+xml",
+    startLink: "http://localhost:3000/maze/five-by-five/",
+
+    // simple right-hand wall-following rules:
+    // if door-right, face right
+    // else-if door-forward, face forward
+    // else-if door-left, face left
+    // else face back
+    rules: {
+      'east': ['south', 'east', 'north', 'west'],
+      'south': ['west', 'south', 'east', 'north'],
+      'west': ['north', 'west', 'south', 'east'],
+      'north': ['east', 'north', 'west', 'south']
+    }
   };
-  
+
   function init() {
     attachEvents();
     setup();
   }
 
   function attachEvents() {
-    var elm;
-
-    elm = document.getElementById('go');
-    if(elm) {
+    const elm = document.getElementById('go');
+    if (elm) {
       elm.onclick = firstMove;
-    }  
+    }
   }
-  
+
   function setup() {
-    var elm;
-    
     g.done = false;
     g.start = false;
-      
-    elm = document.getElementById('game-play');
-    if(elm) {
+
+    const elm = document.getElementById('game-play');
+    if (elm) {
       elm.innerHTML = '';
     }
   }
-  
+
   function firstMove() {
-    if(g.done === true) {
+    if (g.done === true) {
       setup();
       firstMove();
     }
     else {
       g.idx = 1;
-      getDocument(g.startLink);    
+      getDocument(g.startLink);
     }
   }
-        
+
   function getDocument(url) {
-    ajax.httpGet(url, null, processLinks, true, 'processLinks', {'accept' : g.mediaType});
+    fetch(url, {
+      headers: {
+        'accept': g.mediaType
+      }
+    })
+      .then(response => response.text())
+      .then(str => new window.DOMParser().parseFromString(str, 'text/xml'))
+      .then(xml => processLinks(xml))
   }
 
   function getLinkElement(key) {
-    var i, x, rtn;
-    
-    for(i = 0, x = g.links.length; i < x; i++) {
-      if(g.links[i].rel === key) {
+    let rtn;
+
+    for (let i = 0, x = g.links.length; i < x; i++) {
+      if (g.links[i].rel === key) {
         rtn = g.links[i].href;
         break;
-      } 
+      }
     }
     return rtn || '';
   }
-  
+
   function printLine(msg) {
-    var elm, txt;
-    
-    elm = document.getElementById('game-play');
-    if(elm) {
-      txt = elm.innerHTML;
-      txt = g.idx++ + ': ' + msg + '<br>' + txt;
-      elm.innerHTML = txt;
+    const elm = document.getElementById('game-play');
+    if (elm) {
+      elm.innerHTML = `${g.idx}: ${msg}<br>${elm.innerHTML}`;
+      g.idx++;
     }
   }
-          
-  
+
   function processLinks(response) {
-    var xml, i, x, j, y, rels, href, link, flg, rules;
-    
+    let rels, href, link, flg, rules;
+
     flg = false;
     rules = [];
     g.links = [];
-    
+
     // get all the links in the response
-    xml = response.selectNodes('//link');
-    for(i = 0, x = xml.length; i < x; i++) {
+    const xml = response.selectNodes('//link');
+    for (let i = 0, x = xml.length; i < x; i++) {
       href = xml[i].getAttribute('href');
       rels = xml[i].getAttribute('rel').split(' ');
-      for(j = 0, y = rels.length; j < y; j++) {
-        link = {'rel' : rels[j], 'href' : href};
-        g.links[g.links.length] = link;      
+      for (let j = 0, y = rels.length; j < y; j++) {
+        link = { 'rel': rels[j], 'href': href };
+        g.links[g.links.length] = link;
       }
     }
-    
+
     // is there an exit?
     href = getLinkElement('exit');
-    if(href !== '') {
+    if (href !== '') {
       g.done = true;
       printLine(href + ' *** DONE!');
       alert('Done in only ' + --g.idx + ' moves!');
@@ -117,22 +117,22 @@ var thisPage = function() {
     }
 
     // is there an entrance?
-    if(flg === false && g.start === false) {
+    if (flg === false && g.start === false) {
       href = getLinkElement('start');
-      if(href !== '') {
+      if (href !== '') {
         flg = true;
         g.start = true;
         g.facing = 'north';
         printLine(href);
       }
     }
-    
+
     // ok, let's "wall-follow"
-    if(flg === false) {
+    if (flg === false) {
       rules = g.rules[g.facing];
-      for(i = 0, x = rules.length; i < x; i++) {
+      for (let i = 0, x = rules.length; i < x; i++) {
         href = getLinkElement(rules[i]);
-        if(href !== '') {
+        if (href !== '') {
           flg = true;
           g.facing = rules[i];
           printLine(href);
@@ -140,20 +140,17 @@ var thisPage = function() {
         }
       }
     }
-    
+
     // update pointer, handle next move
-    if(href !== '') {
+    if (href !== '') {
       getDocument(href);
     }
   }
 
-  var that = {};
-  that.init = init;
-  return that;
+  return { init }
 };
 
-window.onload = function() {
-  var pg = null;
-  pg = thisPage();
+window.onload = function () {
+  const pg = thisPage();
   pg.init();
 };
