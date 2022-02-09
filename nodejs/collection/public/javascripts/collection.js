@@ -120,9 +120,7 @@ const cjs = function () {
   }
 
   function showQueries() {
-    var dst;
-
-    dst = document.getElementById('queries');
+    const dst = document.getElementById('queries');
     if (dst) {
       dst.appendChild(processLinks(g.data.collection.queries));
     }
@@ -300,16 +298,14 @@ const cjs = function () {
   }
 
   function templateLink() {
-    var a, p;
-
-    a = document.createElement('a');
+    const a = document.createElement('a');
     a.href = '#';
     a.onclick = function () {
       toggleInputForm();
       return false;
     };
     a.appendChild(document.createTextNode('Add Task'));
-    p = document.createElement('p');
+    const p = document.createElement('p');
     p.className = 'input-block';
     p.appendChild(a);
 
@@ -324,36 +320,23 @@ const cjs = function () {
   }
 
   function showEditForm(href) {
-    var coll, i, x, str, form, name, inp;
-    str = '';
-
-    form = document.getElementById('input-form');
+    const form = document.getElementById('input-form');
     if (form) {
       form.action = href;
       form.setAttribute('etag', g.etag);
     }
 
-    coll = g.item.collection.items[0].data;
-
-    for (i = 0, x = coll.length; i < x; i++) {
-      name = coll[i].name;
-      inp = document.getElementsByName(name)[0];
+    const coll = g.item.collection.items[0].data;
+    for (let colli of coll) {
+      const inp = document.getElementsByName(colli.name)[0];
       if (inp) {
-        inp.value = coll[i].value;
+        inp.value = colli.value;
       }
     }
 
-    for (i = 0, x = coll.length; i < x; i++) {
-      name = coll[i].name;
-      inp = document.getElementsByName(name)[0];
-      if (inp) {
-        inp.value = coll[i].value;
-      }
-    }
-
-    inp = document.getElementsByName('delete')[0];
-    if (inp) {
-      inp.style.display = 'inline';
+    const deleteInp = document.getElementsByName('delete')[0];
+    if (deleteInp) {
+      deleteInp.style.display = 'inline';
     }
     toggleInputForm(true);
   }
