@@ -14,41 +14,35 @@ const cjs = function () {
     editForm: true,
   };
 
-  function init() {
+  async function init() {
     g.filterUrl = getArg('filter');
-    const href = g.filterUrl !== '' ? unescape(g.filterUrl) : g.collectionUrl; 
-    loadList(href, (json) => {
-      g.data = json;
-      showLinks();
-      showItems();
-      showQueries();
-      buildTemplate();
-    });
+    const href = g.filterUrl !== '' ? unescape(g.filterUrl) : g.collectionUrl;
+    const json = await loadList(href);
+    g.data = json;
+    showLinks();
+    showItems();
+    showQueries();
+    buildTemplate();
   }
 
-  function loadList(href, callback) {
-    fetch(href, {
+  function loadList(href) {
+    return fetch(href, {
       headers: {
         'accept': g.mediaType
       }
     })
       .then(response => response.json())
-      .then(json => callback(json))
   }
 
-  function loadItem(href, callback) {
-    fetch(href, {
+  async function loadItem(href) {
+    const response = await fetch(href, {
       headers: {
         'accept': g.mediaType
       }
-    })
-      .then(response => {
-        console.log(`ETag header: ${response.headers.get('ETag')}`);
-        const etag = response.headers.get('ETag');
-        const item = response.json();
-        return (etag, item);
-      })
-      .then(etag, item => callback(etag, item));
+    });
+    const etag = response.headers.get('ETag');
+    const json = await response.json();
+    return { etag, json };
   }
 
   function filterData(href, rel) {
@@ -322,12 +316,11 @@ const cjs = function () {
     return p;
   }
 
-  function showItem(href) {
-    loadItem(href, (etag, json) => {
-      g.etag = etag;
-      g.item = json;
-      showEditForm(href, g.item);
-    });
+  async function showItem(href) {
+    const { etag, json } = await loadItem(href);
+    g.etag = etag;
+    g.item = json;
+    showEditForm(href);
   }
 
   function showEditForm(href) {
@@ -479,10 +472,10 @@ const cjs = function () {
 };
 
 /* start the app */
-window.onload = function () {
+window.onload = async function () {
   var c = null;
 
   c = cjs();
   c.g.collectionUrl = '/collection/tasks/';
-  c.init();
+  await c.init();
 };
