@@ -6,7 +6,7 @@ const cjs = function () {
   const g = {
     data: {},
     item: {},
-    collectionUrl: '',
+    collectionUrl: '/collection/tasks/',
     mediaType: 'application/collection+json',
     contentType: 'application/collection+json',
     filterUrl: '',
@@ -342,9 +342,7 @@ const cjs = function () {
   }
 
   function toggleInputForm() {
-    var elm, coll, i, x, inp;
-
-    elm = document.getElementById('input-form');
+    const elm = document.getElementById('input-form');
     if (elm) {
       if (g.inputForm === true) {
         elm.style.display = 'block';
@@ -352,13 +350,13 @@ const cjs = function () {
       } else {
         elm.style.display = 'none';
         g.inputForm = true;
-        coll = document.getElementsByTagName('input');
-        for (i = 0, x = coll.length; i < x; i++) {
+        const coll = document.getElementsByTagName('input');
+        for (let i = 0, x = coll.length; i < x; i++) {
           if (coll[i].type === 'text') {
             coll[i].value = '';
           }
         }
-        inp = document.getElementsByName('delete')[0];
+        const inp = document.getElementsByName('delete')[0];
         if (inp) {
           inp.style.display = 'none';
         }
@@ -367,14 +365,12 @@ const cjs = function () {
   }
 
   function submitInputForm() {
-    var item, form, coll, i, x, z, etag, href, ajax;
-
-    form = document.getElementById('input-form');
+    const form = document.getElementById('input-form');
     if (form) {
-      coll = form.getElementsByTagName('input');
-      item = '{"template" : {"data" : [';
-      z = 0;
-      for (i = 0, x = coll.length; i < x; i++) {
+      const coll = form.getElementsByTagName('input');
+      let item = '{"template" : {"data" : [';
+      let z = 0;
+      for (let i = 0, x = coll.length; i < x; i++) {
         if (coll[i].type == "text") {
           if (z > 0) {
             item += ",";
@@ -386,11 +382,11 @@ const cjs = function () {
       }
       item += "]}}";
 
-      href = form.action;
-      etag = form.getAttribute('etag');
+      const href = form.action;
+      const etag = form.getAttribute('etag');
 
       if (href) {
-        ajax = new XMLHttpRequest();
+        const ajax = new XMLHttpRequest();
         if (ajax) {
           if (etag && etag !== '') {
             ajax.open('put', href, false);
@@ -411,14 +407,12 @@ const cjs = function () {
   }
 
   function deleteItem() {
-    var form, href, etag, ajax;
-
-    form = document.getElementById('input-form');
+    const form = document.getElementById('input-form');
     if (form) {
-      href = form.action;
-      etag = form.getAttribute('etag');
+      const href = form.action;
+      const etag = form.getAttribute('etag');
       if (href) {
-        ajax = new XMLHttpRequest();
+        const ajax = new XMLHttpRequest();
         if (ajax) {
           ajax.open('delete', href, false);
           ajax.setRequestHeader('if-match', etag);
@@ -435,12 +429,11 @@ const cjs = function () {
   }
 
   function getArg(arg) {
-    var id, match, rex;
     arg = arg || '';
-    id = '';
+    let id = '';
 
-    rex = new RegExp("(?:\\?|&){@arg}=([^&]*)".replace('{@arg}', arg));
-    match = rex.exec(location.search.replace("+", " "));
+    const rex = new RegExp("(?:\\?|&){@arg}=([^&]*)".replace('{@arg}', arg));
+    const match = rex.exec(location.search.replace("+", " "));
 
     if (match !== null) {
       id = match[1];
@@ -448,17 +441,11 @@ const cjs = function () {
     return id;
   }
 
-  var that = {};
-  that.init = init;
-  that.g = g;
-  return that;
+  return { init, g };
 };
 
 /* start the app */
 window.onload = async function () {
-  var c = null;
-
-  c = cjs();
-  c.g.collectionUrl = '/collection/tasks/';
+  const c = cjs();
   await c.init();
 };
