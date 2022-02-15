@@ -386,22 +386,27 @@ const cjs = function () {
       const etag = form.getAttribute('etag');
 
       if (href) {
-        const ajax = new XMLHttpRequest();
-        if (ajax) {
-          if (etag && etag !== '') {
-            ajax.open('put', href, false);
-            ajax.setRequestHeader('if-match', etag);
-          } else {
-            ajax.open('post', href, false);
+        const config = {
+          body: item,
+          headers: {
+            'content-type': g.contentType
           }
-          ajax.setRequestHeader('content-type', g.contentType);
-          ajax.send(item);
-          if (ajax.status > 399) {
-            alert('Error sending task!\n' + ajax.status);
+        }
+
+        if (etag && etag !== '') {
+          config['method'] = 'put';
+          config.headers['if-match'] = etag;
+        } else {
+          config['method'] = 'post';
+        }
+
+        fetch(href, config).then(response => {
+          if (response.status > 399) {
+            alert('Error sending task!\n' + response.status);
           } else {
             window.location = window.location;
           }
-        }
+        });
       }
     }
   }
@@ -412,17 +417,18 @@ const cjs = function () {
       const href = form.action;
       const etag = form.getAttribute('etag');
       if (href) {
-        const ajax = new XMLHttpRequest();
-        if (ajax) {
-          ajax.open('delete', href, false);
-          ajax.setRequestHeader('if-match', etag);
-          ajax.send(null);
-          if (ajax.status > 399) {
-            alert('Error deleting task!/n' + ajax.status + '\n' + ajax.statusText);
+        fetch(href, {
+          method: 'delete',
+          headers: {
+            'if-match': etag
+          }
+        }).then(response => {
+          if (response.status > 399) {
+            alert('Error deleting task!/n' + response.status + '\n' + response.statusText);
           } else {
             window.location = window.location;
           }
-        }
+        })
       }
     }
     return false;

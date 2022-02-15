@@ -1,21 +1,32 @@
 # Remaining tasks
 
 - Chapter 2
-  - [x] Modernize example application
+  - [ ] Modernize example application
+    - [x] `var` -> `[let|const]`
+    - [ ] Modernize `for` loops
+    - [ ] Remove need for global state
   - [x] Modernize client js in `public/`
   - [ ] Add Open API
   - [x] Update site urls to use host and port values
   - [x] Use fetch api instead ajax (remove file)
 - Chapter 3
   - [ ] Modernize `collection.js`
+    - [x] `var` -> `[let|const]`
+    - [ ] Modernize `for` loops
+    - [ ] Remove need for global state
+    - [ ] Use `JSON.stringify` instead of building string manually
+    - [ ] Use `Uri`-module instead of manually handling query string parameter building
   - [ ] Add Open API
   - [x] Update site urls to use host and port values
-  - [ ] Use fetch api instead ajax (remove file)
+  - [x] Use fetch api instead ajax (remove file)
 - Chapter 4
   - [ ] Modernize example application
+    - [x] `var` -> `[let|const]`
+    - [ ] Modernize `for` loops
+    - [ ] Remove need for global state
   - [ ] Add Open API
-  - [ ] Update site urls to use host and port values
-  - [ ] Use fetch api instead ajax (remove file)
+  - [x] Update site urls to use host and port values
+  - [x] Use fetch api instead ajax (remove file)
 
 ## Code
 

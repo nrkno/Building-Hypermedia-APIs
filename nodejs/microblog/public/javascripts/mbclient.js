@@ -27,60 +27,60 @@
 
 let p = null;
 
-window.onload = function() {
+window.onload = function () {
   p = thisPage();
   p.init();
 };
 
-let thisPage = function() {
+let thisPage = function () {
 
-  const g = {};
-
-  /* state values */
-  g.startUrl = '/microblog/';
-  g.wait=10;
-  g.status = '';
-  g.url = '';
-  g.body = '';
-  g.idx = 0;
-
-  /* form@class="add-user" */
-  g.user = {};
-  g.user.user = 'robieBot5';
-  g.user.password = 'robie';
-  g.user.email = 'robie@example.org';
-  g.user.name = 'Robie the Robot';
-  g.user.description = 'a simple quote bot';
-  g.user.avatar = 'http://amundsen.com/images/robot.jpg';
-  g.user.website = 'http://robotstxt.org';
-
-  /* form@class="message-post" */
-  g.msg = {};
-  g.msg.message = '';
-
-  /* errors for this bot */
-  g.errors = {};
-  g.errors.noUsersAllLink = 'Unable to find a@rel="users-all" link';
-  g.errors.noUserLink = 'Unable to find a@rel="user" link';
-  g.errors.noRegisterLink = 'Unable to find a@rel="register" link';
-  g.errors.noMessagePostLink = 'Unable to find a@rel="message-post" link';
-  g.errors.noRegisterForm = 'Unable to find form@class="add-user" form';
-  g.errors.noMessagePostForm = 'Unable to find form@class="message-post" form';
-  g.errors.registerFormError = 'Unable to fill out the form@class="add-user" form';
-  g.errors.messageFormError = 'Unable to fill out the form@class="message-post" form';
-
-  /* some aesop's quotes to post */
-  g.quotes = [];
-  g.quotes[0] = 'Gratitude is the sign of noble souls';
-  g.quotes[1] = 'Appearances are deceptive';
-  g.quotes[2] = 'One good turn deserves another';
-  g.quotes[3] = 'It is best to prepare for the days of necessity';
-  g.quotes[4] = 'A willful beast must go his own way';
-  g.quotes[5] = 'He that finds discontentment in one place is not likely to find happiness in another';
-  g.quotes[6] = 'A man is known by the company he keeps';
-  g.quotes[7] = 'In quarreling about the shadow we often lose the substance';
-  g.quotes[8] = 'They are not wise who give to themselves the credit due to others';
-  g.quotes[9] = 'Even a fool is wise-when it is too late!';
+  const g = {
+    /* state values */
+    startUrl: '/microblog/',
+    wait: 10,
+    status: '',
+    url: '',
+    body: '',
+    idx: 0,
+    /* form@class="add-user" */
+    user: {
+      user: 'robieBot5',
+      password: 'robie',
+      email: 'robie@example.org',
+      name: 'Robie the Robot',
+      description: 'a simple quote bot',
+      avatar: 'http://amundsen.com/images/robot.jpg',
+      website: 'http://robotstxt.org'
+    },
+    /* form@class="message-post" */
+    msg: {
+      message: ''
+    },
+    /* errors for this bot */
+    errors: {
+      noUsersAllLink: 'Unable to find a@rel="users-all" link',
+      noUserLink: 'Unable to find a@rel="user" link',
+      noRegisterLink: 'Unable to find a@rel="register" link',
+      noMessagePostLink: 'Unable to find a@rel="message-post" link',
+      noRegisterForm: 'Unable to find form@class="add-user" form',
+      noMessagePostForm: 'Unable to find form@class="message-post" form',
+      registerFormError: 'Unable to fill out the form@class="add-user" form',
+      messageFormError: 'Unable to fill out the form@class="message-post" form'
+    },
+    /* some aesop's quotes to post */
+    quotes: [
+      'Gratitude is the sign of noble souls',
+      'Appearances are deceptive',
+      'One good turn deserves another',
+      'It is best to prepare for the days of necessity',
+      'A willful beast must go his own way',
+      'He that finds discontentment in one place is not likely to find happiness in another',
+      'A man is known by the company he keeps',
+      'In quarreling about the shadow we often lose the substance',
+      'They are not wise who give to themselves the credit due to others',
+      'Even a fool is wise-when it is too late!'
+    ]
+  };
 
   function init() {
     g.status = getArg('status') || 'start';
@@ -105,11 +105,11 @@ let thisPage = function() {
   }
 
   /* these are the things this bot can do */
-  function processResponse(ajax) {
-    const doc = ajax.responseXML;
+  function processResponse(response) {
+    const doc = response.responseXML;
 
-    if(ajax.status===200) {
-      switch(g.status) {
+    if (response.status === 200) {
+      switch (g.status) {
         case 'start':
           findUsersAllLink(doc);
           break;
@@ -135,20 +135,20 @@ let thisPage = function() {
           handleCompleted(doc);
           break;
         default:
-          alert('unknown status: ['+g.status+']');
+          alert('unknown status: [' + g.status + ']');
           return;
       }
     }
     else {
-      alert(ajax.status);
+      alert(response.status);
     }
   }
 
   function findUsersAllLink(doc) {
-    const elm = getElementsByRelType('users-all','a',doc)[0];
-    if(elm) {
+    const elm = getElementsByRelType('users-all', 'a', doc)[0];
+    if (elm) {
       const url = elm.getAttribute('href');
-      nextStep('get-users-all',url);
+      nextStep('get-users-all', url);
     }
     else {
       alert(g.errors.noUsersAllLink);
@@ -156,8 +156,8 @@ let thisPage = function() {
   }
 
   function findMyUserName(doc) {
-    let found=false;
-    const url=g.startUrl;
+    let found = false;
+    const url = g.startUrl;
 
     const coll = getElementsByRelType('user', 'a', doc);
     if (coll.length === 0) {
@@ -165,27 +165,27 @@ let thisPage = function() {
     }
     else {
       for (let i = 0, x = coll.length; i < x; i++) {
-        if (coll[i].firstChild.nodeValue===g.user.user) {
-          found=true;
+        if (coll[i].firstChild.nodeValue === g.user.user) {
+          found = true;
           break;
         }
       }
 
-      if (found===true) {
+      if (found === true) {
         g.status = 'get-message-post-link';
       }
       else {
         g.status = 'get-register-link';
       }
-      nextStep(g.status,url);
+      nextStep(g.status, url);
     }
   }
 
   function findRegisterLink(doc) {
-    const elm = getElementsByRelType('register','a',doc)[0];
+    const elm = getElementsByRelType('register', 'a', doc)[0];
     if (elm) {
       const url = elm.getAttribute('href');
-      nextStep('get-register-form',url);
+      nextStep('get-register-form', url);
     }
     else {
       alert(g.errors.noRegisterLink);
@@ -193,50 +193,50 @@ let thisPage = function() {
   }
 
   function findRegisterForm(doc) {
-    let c=0;
+    let c = 0;
     const args = [];
-    let found=false;
+    let found = false;
     let url;
 
-    const elm = getElementsByClassName('user-add','form',doc)[0];
+    const elm = getElementsByClassName('user-add', 'form', doc)[0];
 
-    if  (elm) {
-      found=true;
+    if (elm) {
+      found = true;
     } else {
       alert(g.errors.noRegisterForm);
       return;
     }
 
-    if (found===true) {
+    if (found === true) {
       url = elm.getAttribute('action');
 
       let coll = elm.getElementsByTagName('input');
       for (let i = 0, x = coll.length; i < x; i++) {
         name = coll[i].getAttribute('name');
-        if(g.user[name]!==undefined) {
-          args[c++] = {'name':name,'value':g.user[name]};
+        if (g.user[name] !== undefined) {
+          args[c++] = { 'name': name, 'value': g.user[name] };
         }
       }
 
       coll = elm.getElementsByTagName('textarea');
-      for (let i = 0, x = coll.length; i < x ; i++) {
+      for (let i = 0, x = coll.length; i < x; i++) {
         const name = coll[i].getAttribute('name');
-        if(g.user[name]!==undefined) {
-          args[c++] = {'name':name,'value':g.user[name]};
+        if (g.user[name] !== undefined) {
+          args[c++] = { 'name': name, 'value': g.user[name] };
         }
       }
     }
 
-    if (args.length!==0) {
+    if (args.length !== 0) {
       let body = '';
-      for (let i=0, x=args.length; i < x; i++) {
-        if(i!==0) {
-          body +='&';
+      for (let i = 0, x = args.length; i < x; i++) {
+        if (i !== 0) {
+          body += '&';
         }
-        body += args[i].name+'='+encodeURIComponent(args[i].value);
+        body += args[i].name + '=' + encodeURIComponent(args[i].value);
       }
       alert(body);
-      nextStep('post-user',url,body);
+      nextStep('post-user', url, body);
     } else {
       alert(g.errors.registerFormError);
     }
@@ -250,11 +250,11 @@ let thisPage = function() {
     let c = 0;
     let url;
     const args = [];
-    let found=false;
+    let found = false;
 
-    const elm = getElementsByClassName('message-post','form',doc)[0];
+    const elm = getElementsByClassName('message-post', 'form', doc)[0];
     if (elm) {
-      found=true;
+      found = true;
     } else {
       alert(g.errors.noMessagePostForm);
       return;
@@ -265,8 +265,8 @@ let thisPage = function() {
       const coll = elm.getElementsByTagName('textarea');
       for (let i = 0, x = coll.length; i < x; i++) {
         name = coll[i].getAttribute('name');
-        if(g.msg[name] !== undefined) {
-          if(name === 'message') {
+        if (g.msg[name] !== undefined) {
+          if (name === 'message') {
             args[c++] = { name, value: g.quotes[g.idx] };
           }
           else {
@@ -279,10 +279,10 @@ let thisPage = function() {
     if (args.length !== 0) {
       let body = '';
       for (let i = 0, x = args.length; i < x; i++) {
-        if(i!==0) {
-          body +='&';
+        if (i !== 0) {
+          body += '&';
         }
-        body += args[i].name+'='+escape(args[i].value);
+        body += args[i].name + '=' + escape(args[i].value);
       }
       nextStep('post-message', url, body);
     } else {
@@ -296,8 +296,8 @@ let thisPage = function() {
 
   function handleCompleted() {
     if (g.idx < 9) {
-      if (confirm('Succces! Should I wait ' + g.wait + ' seconds to post again?')===true) {
-        setTimeout(newQuote,g.wait*1000);
+      if (confirm('Succces! Should I wait ' + g.wait + ' seconds to post again?') === true) {
+        setTimeout(newQuote, g.wait * 1000);
       }
     }
     else {
@@ -313,7 +313,7 @@ let thisPage = function() {
 
   function nextStep(status, url, body) {
     let href = window.location.href;
-    href = href.substring(0,href.indexOf('?'));
+    href = href.substring(0, href.indexOf('?'));
 
     let adr = href + '?status=' + status;
     adr += '&idx=' + g.idx;
@@ -325,47 +325,38 @@ let thisPage = function() {
   }
 
   function makeRequest() {
-    let data, method;
-
-    const ajax=new XMLHttpRequest();
-    if (ajax) {
-      ajax.onreadystatechange = function() {
-        if (ajax.readyState === 4 || ajax.readyState === 'complete') {
-          processResponse(ajax);
-        }
-      };
-
-      if (g.body !== '') {
-        data = g.body;
-        method = 'post';
+    const config = {
+      headers: {
+        accept: 'application/xhtml+xml'
       }
-      else {
-        method = 'get';
-      }
+    };
 
-      ajax.open(method, g.url,true);
-
-      if (data) {
-        ajax.setRequestHeader('content-type','application/x-www-form-urlencoded');
-        ajax.setRequestHeader('authorization','Basic '+Base64.encode(g.user.user+':'+g.user.password));
-      }
-
-      g.url='';
-      g.body='';
-
-      ajax.setRequestHeader('accept','application/xhtml+xml');
-      ajax.send(data);
+    if (g.body !== '') {
+      config['body'] = g.body;
+      config['method'] = 'post';
+      config.headers['content-type'] = 'application/x-www-form-urlencoded';
+      config.headers['authorization'] = 'Basic ' + Base64.encode(g.user.user + ':' + g.user.password);
     }
+    else {
+      config['method'] = 'get';
+    }
+
+    fetch(g.url, config)
+      .then(response => {
+        g.url = '';
+        g.body = '';
+        processResponse(response);
+      });
   }
 
   function getElementsByRelType(relType, tag, elm) {
     const testClass = new RegExp("(^|\\s)" + relType + "(\\s|$)");
     tag = tag || "*";
-    const elements = (tag === "*" && elm.all)? elm.all : elm.getElementsByTagName(tag);
+    const elements = (tag === "*" && elm.all) ? elm.all : elm.getElementsByTagName(tag);
     const returnElements = [];
     const length = elements.length;
 
-    for (let i = 0; i < length; i++){
+    for (let i = 0; i < length; i++) {
       const current = elements[i];
       if (testClass.test(current.getAttribute('rel'))) {
         returnElements.push(current);
@@ -378,7 +369,7 @@ let thisPage = function() {
   function getElementsByClassName(className, tag, elm) {
     const testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
     tag = tag || "*";
-    const elements = (tag === "*" && elm.all)? elm.all : elm.getElementsByTagName(tag);
+    const elements = (tag === "*" && elm.all) ? elm.all : elm.getElementsByTagName(tag);
     const returnElements = [];
 
     const length = elements.length;
