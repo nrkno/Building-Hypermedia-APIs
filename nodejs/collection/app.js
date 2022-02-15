@@ -21,7 +21,7 @@ const cradle = require('cradle');
 const db = new (cradle.Connection)().database('collection-data-tasks');
 
 // global data
-const contentType = 'application/json';
+const contentType = 'application/collection+json';
 
 // Configuration
 app.set('views', __dirname + '/views');
